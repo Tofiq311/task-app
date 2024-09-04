@@ -11,6 +11,7 @@ const oldTasks = localStorage.getItem("tasks");
 
 const App = () => {
   const [tasks, setTasks] = useState(JSON.parse(oldTasks) || []);
+  const [activeCard, setActiveCard] = useState(null)
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -20,6 +21,19 @@ const App = () => {
     const newTasks = tasks.filter((task, index) => index !== taskIndex);
     setTasks(newTasks);
   };
+
+  const onDrop = (status, position) => {
+    if(activeCard == null || activeCard === undefined) return;
+    const taskToMove = tasks[activeCard];
+    const updatedTasks = tasks.filter((task, index) => index !== activeCard)
+   updatedTasks.splice(position, 0, {
+    ...taskToMove,
+    status : status
+   }) 
+
+   setTasks(updatedTasks)
+
+  }
 
   return (
     <div className="app">
@@ -31,6 +45,8 @@ const App = () => {
           tasks={tasks}
           status="todo"
           handleDelete={handleDelete}
+          setActiveCard={setActiveCard}
+          onDrop={onDrop}
         />
         <TaskColumn
           title="Doing"
@@ -38,6 +54,8 @@ const App = () => {
           tasks={tasks}
           status="doing"
           handleDelete={handleDelete}
+          setActiveCard={setActiveCard}
+          onDrop={onDrop}
         />
         <TaskColumn
           title="Done"
@@ -45,6 +63,8 @@ const App = () => {
           tasks={tasks}
           status="done"
           handleDelete={handleDelete}
+          setActiveCard={setActiveCard}
+          onDrop={onDrop}
         />
       </main>
     </div>
